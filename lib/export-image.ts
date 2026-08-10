@@ -8,7 +8,7 @@ export async function exportCardToImage(node: HTMLElement): Promise<string> {
       quality: 1.0,
       pixelRatio: 2, // 2x for retina/social media sharpness
       skipFonts: false,
-      cacheBust: true,
+      cacheBust: false,
       style: {
         transform: "scale(1)",
         margin: "0",
