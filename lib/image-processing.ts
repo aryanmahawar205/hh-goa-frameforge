@@ -3,6 +3,8 @@ import heic2any from "heic2any";
 export async function processImageFile(file: File): Promise<string> {
   const isHeic = file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic");
 
+  let finalBlob: Blob = file;
+
   if (isHeic) {
     try {
       const convertedBlob = await heic2any({
@@ -12,13 +14,20 @@ export async function processImageFile(file: File): Promise<string> {
       });
 
       // Handle cases where heic2any returns an array of blobs (animations)
-      const blobToUse = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-      return URL.createObjectURL(blobToUse);
+      finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
     } catch (error) {
       console.error("HEIC conversion failed:", error);
       throw new Error("Failed to convert HEIC image. Please try a JPG or PNG.");
     }
   }
 
-  return URL.createObjectURL(file);
+  // Convert to Base64 Data URL instead of Object URL
+  // This bypasses html-to-image's strict CORS and caching limitations
+  // which often cause net::ERR_FILE_NOT_FOUND when generating blobs
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(finalBlob);
+  });
 }
