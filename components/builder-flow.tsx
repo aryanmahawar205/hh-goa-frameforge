@@ -11,6 +11,7 @@ export function BuilderFlow() {
   const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [stack, setStack] = useState("");
+  const [team, setTeam] = useState("");
 
   const builderTitle = useMemo(() => generateBuilderTitle(name, stack), [name, stack]);
 
@@ -118,8 +119,10 @@ export function BuilderFlow() {
           <BuilderForm
             name={name}
             stack={stack}
+            team={team}
             onNameChange={setName}
             onStackChange={setStack}
+            onTeamChange={setTeam}
           />
         </div>
       </div>
@@ -132,6 +135,7 @@ export function BuilderFlow() {
             photo={photoDataUrl}
             name={name}
             stack={stack}
+            team={team}
             title={builderTitle}
           />
 
